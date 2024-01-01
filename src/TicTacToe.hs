@@ -62,6 +62,26 @@ instance Applicative Board where
           (f7 x7) (f8 x8) (f9 x9)
 
 
+instance Show Score where
+  show (Score x o) = "X: " ++ (show x) ++ "\n" ++
+                     "O: " ++ (show o) ++ "\n"
+
+
+instance Show a => Show (Board a) where
+  show (Board x1 x2 x3 x4 x5 x6 x7 x8 x9) = 
+    (sh x1) ++ "|" ++ (sh x2) ++ "|" ++ (sh x3) ++ "\n---+---+---\n" ++
+    (sh x4) ++ "|" ++ (sh x5) ++ "|" ++ (sh x6) ++ "\n---+---+---\n" ++
+    (sh x7) ++ "|" ++ (sh x8) ++ "|" ++ (sh x9) ++ "\n"
+    where sh x = " " ++ show x ++ " "
+
+
+instance Show Round where
+  show (Round b t s) = show s ++ "\n" ++ 
+                       show b ++ "\n" ++ 
+                       show t ++ ", " ++
+                       "Please enter one of (1..9): "
+
+
 {-
 
 X: 0
@@ -75,27 +95,9 @@ O: 0
 
 X, Press one of (1..9):
 -}
-instance Show a => Show (Board a) where
-  show (Board x1 x2 x3 x4 x5 x6 x7 x8 x9) = 
-    (sh x1) ++ "|" ++ (sh x2) ++ "|" ++ (sh x3) ++ "\n---+---+---\n" ++
-    (sh x4) ++ "|" ++ (sh x5) ++ "|" ++ (sh x6) ++ "\n---+---+---\n" ++
-    (sh x7) ++ "|" ++ (sh x8) ++ "|" ++ (sh x9)
-    where sh x = " " ++ show x ++ " "
-
-
-instance Show Score where
-  show (Score x o) = 
-    "X: " ++ (show x) ++ "\n" ++
-    "O: " ++ (show o) ++ "\n"
-
-
-instance Show Round where
-  show (Round b X s) = (show s) ++ "\n" ++ show b
-
-
 tictactoe :: IO ()
 tictactoe = do
   putStrLn $ show r 
   where 
-    b = pure (Set X) :: Board Cell
+    b = pure Empty :: Board Cell
     r = Round b X (Score 0 0)
