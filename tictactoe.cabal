@@ -25,16 +25,19 @@ source-repository head
 
 library
   exposed-modules:
-      TicTacToe
+      Core
+      State
   other-modules:
       Paths_tictactoe
   autogen-modules:
       Paths_tictactoe
   hs-source-dirs:
-      src
+      tictactoe
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , haskeline
+    , transformers
   default-language: Haskell2010
 
 executable tictactoe-exe

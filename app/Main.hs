@@ -1,8 +1,8 @@
 module Main (main) where
 
 
-import TicTacToe
+import Core
 
 
 main :: IO ()
-main = tictactoe
+main = tictactoe 3
