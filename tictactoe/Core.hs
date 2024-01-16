@@ -9,11 +9,14 @@ import Control.Monad.Trans.Class
 import State
 
 
-readChar :: StateT RoundS IO (Maybe Char)
-readChar = do
-  s <- get
-  c <- runInputT defaultSettings $ getInputChar (show (turn s) ++ ": ? ")
-  return c
+readChar :: String -> StateT RoundS IO Char
+readChar p = do
+  t <- gets turn
+  mayc <- runInputT defaultSettings $ getInputChar (show t ++ ": " ++ p)
+  case mayc of 
+    Nothing -> fail "EOF"
+    Just 'q' -> fail "Quit"
+    Just c -> return c
 
 
 render :: StateT RoundS IO ()
@@ -22,14 +25,37 @@ render = do
   lift $ putStrLn (show s)
 
 
-move :: Maybe Char -> StateT RoundS IO Bool 
-move Nothing = return False 
-move (Just c) = modify (applyMove c) >> return True
+win :: StateT RoundS IO () 
+win = do
+  b <- gets board
+  case boardWinner b of 
+    Nothing -> return ()
+    Just w -> do
+      render
+      modify (applyWinner w)
+      _ <- readChar " Winner, press any key to continue" 
+      return ()
+
+
+continue :: StateT RoundS IO Bool
+continue = do
+  s <- gets score
+  if (total s) == (matches s) 
+    then return False
+    else return True
+
+
+move :: Char -> StateT RoundS IO () 
+move c = do
+  s <- get
+  if canMove c s
+    then modify (applyMove c) >> win
+    else return ()
 
 
 loop :: Bool -> StateT RoundS IO ()
-loop False = return ()
-loop _ = render >> readChar >>= move >>= loop
+loop False = render >> return ()
+loop _ = render >> readChar "? " >>= move >> continue >>= loop
 
 
 {-
