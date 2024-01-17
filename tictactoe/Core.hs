@@ -22,6 +22,7 @@ readChar p = do
 render :: StateT RoundS IO ()
 render = do
   s <- get
+  lift $ putStr ("\x1b[" ++ show rows ++ "A\x1b[0J")
   lift $ putStrLn (show s)
 
 
@@ -58,21 +59,13 @@ loop False = render >> return ()
 loop _ = render >> readChar "? " >>= move >> continue >>= loop
 
 
-{-
+rows :: Int
+rows = 12
 
-X: 0
-O: 0
 
-   |   |      1 | 2 | 3
----+---+---  ---+---+---
-   |   |      4 | 5 | 6 
----+---+---  ---+---+---
-   |   |      7 | 8 | 9
-
-X, Press one of (1..9):
--}
 tictactoe :: Int -> IO ()
 tictactoe t = do
+  putStrLn $ replicate rows '\n'
   _ <- runStateT (loop True) $ r
   return ()
   where 
