@@ -22,8 +22,9 @@ readChar p = do
 render :: StateT RoundS IO ()
 render = do
   s <- get
-  lift $ putStr ("\x1b[" ++ show rows ++ "A\x1b[0J")
-  lift $ putStrLn (show s)
+  lift $ r s
+  where 
+    r s = putStr ("\x1b[" ++ show rows ++ "A\x1b[0J") >> putStrLn (show s)
 
 
 win :: StateT RoundS IO () 
@@ -34,7 +35,7 @@ win = do
     Just w -> do
       render
       modify (applyWinner w)
-      _ <- readChar " Winner, press any key to continue" 
+      _ <- readChar "The winner, press any key to continue" 
       return ()
 
 

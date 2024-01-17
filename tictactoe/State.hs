@@ -25,9 +25,9 @@ data Cell
 
 
 data Board a = Board 
-  { c1 :: a, c2 :: a, c3 :: a
-  , c4 :: a, c5 :: a, c6 :: a
-  , c7 :: a, c8 :: a, c9 :: a
+  { cell1 :: a, cell2 :: a, cell3 :: a
+  , cell4 :: a, cell5 :: a, cell6 :: a
+  , cell7 :: a, cell8 :: a, cell9 :: a
   }
 
 
@@ -76,10 +76,14 @@ instance Show Score where
 
 instance Show a => Show (Board a) where
   show (Board x1 x2 x3 x4 x5 x6 x7 x8 x9) = 
-    (sh x1) ++ "|" ++ (sh x2) ++ "|" ++ (sh x3) ++ "\n---+---+---\n" ++
-    (sh x4) ++ "|" ++ (sh x5) ++ "|" ++ (sh x6) ++ "\n---+---+---\n" ++
-    (sh x7) ++ "|" ++ (sh x8) ++ "|" ++ (sh x9) ++ "\n"
-    where sh x = " " ++ show x ++ " "
+    row x1 x2 x3 ++ "\n" ++ hsep ++ 
+    row x4 x5 x6 ++ "\n" ++ hsep ++
+    row x7 x8 x9 ++ "\n" 
+    where 
+      sh x = " " ++ show x ++ " "
+      row x y z = (sh x) ++ rsep ++ (sh y) ++ rsep ++ (sh z)
+      rsep = "|"
+      hsep = "---+---+---\n"
 
 
 instance Show RoundS where
@@ -93,17 +97,17 @@ toggle X = O
 toggle _ = X
 
 
-boardIsEmpty :: Char -> Board Cell -> Bool
-boardIsEmpty '1' (Board x _ _ _ _ _ _ _ _) = x == Empty
-boardIsEmpty '2' (Board _ x _ _ _ _ _ _ _) = x == Empty
-boardIsEmpty '3' (Board _ _ x _ _ _ _ _ _) = x == Empty
-boardIsEmpty '4' (Board _ _ _ x _ _ _ _ _) = x == Empty
-boardIsEmpty '5' (Board _ _ _ _ x _ _ _ _) = x == Empty
-boardIsEmpty '6' (Board _ _ _ _ _ x _ _ _) = x == Empty
-boardIsEmpty '7' (Board _ _ _ _ _ _ x _ _) = x == Empty
-boardIsEmpty '8' (Board _ _ _ _ _ _ _ x _) = x == Empty
-boardIsEmpty '9' (Board _ _ _ _ _ _ _ _ x) = x == Empty
-boardIsEmpty _ _ = False
+cellIsEmpty :: Char -> Board Cell -> Bool
+cellIsEmpty '1' (Board Empty _ _ _ _ _ _ _ _) = True
+cellIsEmpty '2' (Board _ Empty _ _ _ _ _ _ _) = True
+cellIsEmpty '3' (Board _ _ Empty _ _ _ _ _ _) = True
+cellIsEmpty '4' (Board _ _ _ Empty _ _ _ _ _) = True
+cellIsEmpty '5' (Board _ _ _ _ Empty _ _ _ _) = True
+cellIsEmpty '6' (Board _ _ _ _ _ Empty _ _ _) = True
+cellIsEmpty '7' (Board _ _ _ _ _ _ Empty _ _) = True
+cellIsEmpty '8' (Board _ _ _ _ _ _ _ Empty _) = True
+cellIsEmpty '9' (Board _ _ _ _ _ _ _ _ Empty) = True
+cellIsEmpty _ _ = False
 
 
 boardIsFull :: Board Cell -> Bool
@@ -120,7 +124,7 @@ boardIsFull _ = True
 
 
 canMove :: Char -> RoundS -> Bool
-canMove c s = boardIsEmpty c (board s)
+canMove c s = cellIsEmpty c (board s)
 
 
 boardUpdate :: Player -> Char -> Board Cell -> Board Cell
