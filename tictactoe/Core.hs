@@ -49,8 +49,8 @@ continue = do
 
 move :: Char -> StateT RoundS IO () 
 move c = do
-  s <- get
-  if canMove c s
+  b <- gets board
+  if cellIsEmpty c b
     then modify (applyMove c) >> win
     else return ()
 

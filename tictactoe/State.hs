@@ -5,10 +5,10 @@ module State
   , Score(..)
   , RoundS(..)
   , applyMove
-  , canMove
   , applyWinner
   , boardWinner
   , boardIsFull
+  , cellIsEmpty
   ) where
 
 
@@ -123,10 +123,7 @@ boardIsFull (Board _ _ _ _ _ _ _ _ Empty) = False
 boardIsFull _ = True
 
 
-canMove :: Char -> RoundS -> Bool
-canMove c s = cellIsEmpty c (board s)
-
-
+-- TODO: use applicative functor
 boardUpdate :: Player -> Char -> Board Cell -> Board Cell
 boardUpdate p '1' (Board _ x2 x3 x4 x5 x6 x7 x8 x9) = 
   Board (Set p) x2 x3 x4 x5 x6 x7 x8 x9
@@ -164,6 +161,7 @@ applyWinner p (RoundS _ m _ s) =
 
 
 boardWinner :: Board Cell -> Maybe Player
+-- X
 boardWinner (Board  (Set X) (Set X) (Set X)  _ _ _  _ _ _) = Just X
 boardWinner (Board  _ _ _  (Set X) (Set X) (Set X)  _ _ _) = Just X
 boardWinner (Board  _ _ _  _ _ _  (Set X) (Set X) (Set X)) = Just X
@@ -172,7 +170,7 @@ boardWinner (Board  _ (Set X) _  _ (Set X) _  _ (Set X) _) = Just X
 boardWinner (Board  _ _ (Set X)  _ _ (Set X)  _ _ (Set X)) = Just X
 boardWinner (Board  (Set X) _ _  _ (Set X) _  _ _ (Set X)) = Just X
 boardWinner (Board  _ _ (Set X)  _ (Set X) _  (Set X) _ _) = Just X
-
+-- O
 boardWinner (Board  (Set O) (Set O) (Set O)  _ _ _  _ _ _) = Just O
 boardWinner (Board  _ _ _  (Set O) (Set O) (Set O)  _ _ _) = Just O
 boardWinner (Board  _ _ _  _ _ _  (Set O) (Set O) (Set O)) = Just O
@@ -181,4 +179,5 @@ boardWinner (Board  _ (Set O) _  _ (Set O) _  _ (Set O) _) = Just O
 boardWinner (Board  _ _ (Set O)  _ _ (Set O)  _ _ (Set O)) = Just O
 boardWinner (Board  (Set O) _ _  _ (Set O) _  _ _ (Set O)) = Just O
 boardWinner (Board  _ _ (Set O)  _ (Set O) _  (Set O) _ _) = Just O
+-- No winner
 boardWinner _ = Nothing
