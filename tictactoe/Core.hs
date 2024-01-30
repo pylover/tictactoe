@@ -57,7 +57,10 @@ move c = do
 
 loop :: Bool -> StateT RoundS IO ()
 loop False = render >> return ()
-loop _ = render >> readChar "? " >>= move >> continue >>= loop
+loop _ = do
+  render
+  readChar "? " >>= move 
+  continue >>= loop
 
 
 rows :: Int
